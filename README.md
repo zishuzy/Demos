@@ -1,3 +1,3 @@
-# Demo
+# Demos
 
-放置各种功能 demo
+Used to provide various function demos.
