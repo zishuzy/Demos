@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
-
+cmake_minimum_required(VERSION 3.12)
 project(utils_x11)
 
 set(DEMO_ROOT_PATH ${PROJECT_SOURCE_DIR}/../..)
