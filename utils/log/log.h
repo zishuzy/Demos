@@ -18,18 +18,26 @@
 #include <stdio.h>
 #include <string.h>
 
-#define LOG_VERBOSE(fp, level, fmt, ...)                                            \
-    do {                                                                            \
-        struct timeval tv_now;                                                      \
-        struct tm tm_now;                                                           \
-        char time_str_1[32] = {0};                                                  \
-        char time_str_2[64] = {0};                                                  \
-        gettimeofday(&tv_now, NULL);                                                \
-        strftime(time_str_1, 32, "%Y-%m-%d %H:%M:%S",                               \
-                 localtime_r((const time_t *)&tv_now.tv_sec, &tm_now));             \
-        snprintf(time_str_2, 64, "%s.%.06ld", time_str_1, (long)tv_now.tv_usec);    \
-        fprintf(fp, "%s|%s:[%d:%ld][%s:%d] " fmt "\n", level, time_str_2, getpid(), \
-                syscall(SYS_gettid), __FUNCTION__, __LINE__, ##__VA_ARGS__);        \
+#define LOG_VERBOSE(fp, level, fmt, ...)                                         \
+    do {                                                                         \
+        static __thread pid_t pid = 0;                                           \
+        static __thread pid_t tid = 0;                                           \
+        struct timeval tv_now;                                                   \
+        struct tm tm_now;                                                        \
+        char time_str[64] = {0};                                                 \
+                                                                                 \
+        if (pid == 0) {                                                          \
+            pid = getpid();                                                      \
+            tid = syscall(SYS_gettid);                                           \
+        }                                                                        \
+                                                                                 \
+        gettimeofday(&tv_now, NULL);                                             \
+        strftime(time_str, 32, "%Y-%m-%d %H:%M:%S",                              \
+                 localtime_r((const time_t *)&tv_now.tv_sec, &tm_now));          \
+        snprintf(time_str + 19, 45, ".%.06ld", (long)tv_now.tv_usec);            \
+                                                                                 \
+        fprintf(fp, "%s|%s:[%d:%d][%s:%d] " fmt "\n", level, time_str, pid, tid, \
+                __FUNCTION__, __LINE__, ##__VA_ARGS__);                          \
     } while (0);
 
 #ifdef DEBUG
