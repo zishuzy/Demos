@@ -10,5 +10,7 @@ message(STATUS "Set DEMO_ROOT_PATH: ${DEMO_ROOT_PATH}")
 
 include_directories(${PROJECT_SOURCE_DIR})
 
+enable_testing()
+
 add_subdirectory(utils)
 add_subdirectory(x11_win_monitor)
