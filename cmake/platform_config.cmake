@@ -1,13 +1,9 @@
-# 检查是否已经包含过该文件
-if(NOT DEFINED DEMO_PLATFORM_CONFIG_EXECUTED)
-    # 在这里执行配置操作
-    message(STATUS "Executing platform_config.cmake")
-
-    # 设置一个变量标记这个文件已经执行过
-    set(DEMO_PLATFORM_CONFIG_EXECUTED TRUE CACHE INTERNAL "Indicates that platform_config.cmake has been executed")
+if(NOT DEFINED PLATFORM_CONFIG_CMAKE)
+    set(PLATFORM_CONFIG_CMAKE ON)
 
     # 生成 compile_commands.json 文件
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+    message(STATUS "Generate compile_commands.json")
 
     # 设置 C 标准
     if(NOT DEFINED CMAKE_C_STANDARD)
@@ -36,18 +32,9 @@ if(NOT DEFINED DEMO_PLATFORM_CONFIG_EXECUTED)
         message(STATUS "current platform: Windows")
     ELSEIF(CMAKE_SYSTEM_NAME MATCHES "Darwin")
         message(STATUS "current platform: Mac os x")
-        find_program(LLVM_CLANG clang HINTS /opt/homebrew/opt/llvm/bin /usr/local/opt/llvm/bin)
-        find_program(LLVM_CLANGPP clang++ HINTS /opt/homebrew/opt/llvm/bin /usr/local/opt/llvm/bin)
-
-        if(LLVM_CLANG AND LLVM_CLANGPP)
-            SET(CMAKE_C_COMPILER ${LLVM_CLANG})
-            SET(CMAKE_CXX_COMPILER ${LLVM_CLANGPP})
-        else()
-            message(WARNING "LLVM compiler not found, using default compiler")
-        endif()
     ELSE()
         message(STATUS "other platform: ${CMAKE_SYSTEM_NAME}")
     ENDIF(CMAKE_SYSTEM_NAME MATCHES "Linux")
 else()
-    message(STATUS "platform_config.cmake has already been executed, skipping.")
+    message(STATUS "Skip platform config")
 endif()
