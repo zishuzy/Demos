@@ -33,17 +33,17 @@ public:
     void SetOk(bool ok) noexcept { ok_ = ok; }
     bool IsOk() const noexcept { return ok_; }
 
-    void SetErr(const _Te &err)
+    void SetError(const _Te &err)
     {
         SetOk(false);
         err_ = err;
     }
-    void SetErr(_Te &&err)
+    void SetError(_Te &&err)
     {
         SetOk(false);
         err_ = std::move(err);
     }
-    const _Te &GetErr() const noexcept { return err_; }
+    const _Te &GetError() const noexcept { return err_; }
 
     void SetData(const _Td &data) { data_ = data; }
     void SetData(_Td &&data) noexcept { data_ = std::move(data); }
