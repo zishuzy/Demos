@@ -53,7 +53,7 @@ result::Result<WindowProperty> GetWindowProperty(Display *display, Window window
                                  &actual_type_return, &actual_format_return,
                                  &nitems_return, &size, &buffer);
         if (err != 0 || size == 0) {
-            result.SetErr("Failed to get size of property!");
+            result.SetError("Failed to get size of property!");
             break;
         }
 
@@ -62,13 +62,13 @@ result::Result<WindowProperty> GetWindowProperty(Display *display, Window window
                                &actual_type_return, &actual_format_return, &nitems_return,
                                &bytesleft, &buffer);
         if (err != 0) {
-            result.SetErr("Failed to get data of property!");
+            result.SetError("Failed to get data of property!");
             break;
         }
         // FIXME: 这里没有考虑一次没有读完的情况，也即 bytesleft != 0 的情况。
         actual_size_return = size - bytesleft;
         if (actual_size_return == 0) {
-            result.SetErr("Get empty data of property!");
+            result.SetError("Get empty data of property!");
             break;
         }
         WindowProperty wp;
@@ -103,7 +103,7 @@ result::Result<pid_t> GetWindowPid(Display *display, Window win)
 
         status = XResQueryClientIds(display, 1, &spec, &num_ids, &client_ids);
         if (status != Success) {
-            result.SetErr("Failed to query client ids!");
+            result.SetError("Failed to query client ids!");
             break;
         }
 
@@ -117,7 +117,7 @@ result::Result<pid_t> GetWindowPid(Display *display, Window win)
         XResClientIdsDestroy(num_ids, client_ids);
 
         if (client_pid < 0) {
-            result.SetErr("Failed to get client pid from client ids!");
+            result.SetError("Failed to get client pid from client ids!");
             break;
         }
         result.SetData(client_pid);
@@ -171,7 +171,7 @@ result::Result<WindowGeometry> GetWindowGeometry(Display *display, Window win)
         WindowGeometry wg;
         XWindowAttributes attr;
         if (XGetWindowAttributes(display, win, &attr) == 0) {
-            result.SetErr("Failed to get window attributes!");
+            result.SetError("Failed to get window attributes!");
             break;
         }
         wg.width = attr.width;
@@ -185,7 +185,7 @@ result::Result<WindowGeometry> GetWindowGeometry(Display *display, Window win)
             unsigned int nchildren_return = 0;
             if (XQueryTree(display, win, &win_root, &win_parent, &win_chlidren,
                            &nchildren_return) == 0) {
-                result.SetErr("Failed to query window from tree!");
+                result.SetError("Failed to query window from tree!");
                 break;
             }
             XFree(win_chlidren);
@@ -217,7 +217,7 @@ result::Result<Window> GetActiveWindow(Display *display)
 
         auto ret = GetWindowProperty(display, win_root_id, atom_active);
         if (!ret.IsOk()) {
-            result.SetErr(ret.GetErr());
+            result.SetError(ret.GetError());
             break;
         }
         // FIXME: 这里没有校验返回的数据类型
@@ -225,7 +225,7 @@ result::Result<Window> GetActiveWindow(Display *display)
         win_id = *data;
         XFree(data);
         if (win_id == 0) {
-            result.SetErr("Get invalid window id!");
+            result.SetError("Get invalid window id!");
             break;
         }
 
@@ -254,7 +254,7 @@ result::Result<bool> IsWindowChildren(Display *display, Window win_parent,
         int nOpeRet = XQueryTree(display, winTmp, &winActRoot, &winActParent,
                                  &pWinActChlidren, &unChlidrnCount);
         if (nOpeRet == 0) {
-            result.SetErr("Failed to query window from tree!");
+            result.SetError("Failed to query window from tree!");
             break;
         }
         for (unsigned int i = 0; i < unChlidrnCount; i++) {
