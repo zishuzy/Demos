@@ -12,3 +12,5 @@ include(${DEMO_ROOT_PATH}/cmake/platform_config.cmake)
 include_directories(${DEMO_ROOT_PATH})
 
 add_subdirectory(x11)
+add_subdirectory(encoding)
+add_subdirectory(ssl)
