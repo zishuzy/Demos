@@ -30,12 +30,17 @@ int main(int argc, char *argv[])
         LOG_ERROR("Failed to init monitor win");
         return -1;
     }
-    monitor_win.RegActiveWindowCb(activeWindow);
 
+    if (monitor_win.RegActiveWindowCb(activeWindow) == false) {
+        LOG_ERROR("Failed to reg active window callback");
+        return -1;
+    }
+ 
     while (g_run_flag) {
         sleep(1);
     }
 
+    monitor_win.UnregActiveWindowCb(activeWindow);
     monitor_win.Uninit();
 
     LOG_INFO("Main process exit.");
